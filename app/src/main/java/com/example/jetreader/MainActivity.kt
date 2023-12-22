@@ -14,30 +14,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetreader.ui.theme.JetReaderTheme
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             JetReaderTheme {
 
-                val db = FirebaseFirestore.getInstance()
-                val user: MutableMap<String,Any> = HashMap()
-                user["firstName"] = "Nigel"
-                user["lastName"] = "Grey"
-
-
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    db.collection("users").add(user).addOnSuccessListener {
-                        Log.d("FB","onCreate: ${it.id}")
-                    }.addOnFailureListener{
-                        Log.d("FB","onFailure: ${it}")
-                    }
                     Greeting("Android")
                 }
             }
