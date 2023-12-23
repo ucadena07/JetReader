@@ -14,7 +14,7 @@ import com.example.jetreader.screens.update.UpdateScreen
 @Composable
 fun ReaderNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = ReaderScreens.LoginScreen.name){
+    NavHost(navController = navController, startDestination = ReaderScreens.SplashScreen.name){
         composable(ReaderScreens.SplashScreen.name){
             SplashScreen(navController)
         }
