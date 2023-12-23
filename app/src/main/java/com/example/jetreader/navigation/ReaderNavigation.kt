@@ -1,4 +1,37 @@
 package com.example.jetreader.navigation
 
-class ReaderNavigation {
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.jetreader.screens.SplashScreen
+import com.example.jetreader.screens.details.BookDetailsScreen
+import com.example.jetreader.screens.home.HomeScreen
+import com.example.jetreader.screens.login.LoginScreen
+import com.example.jetreader.screens.search.SearchScreen
+import com.example.jetreader.screens.update.UpdateScreen
+
+@Composable
+fun ReaderNavigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = ReaderScreens.LoginScreen.name){
+        composable(ReaderScreens.SplashScreen.name){
+            SplashScreen(navController)
+        }
+        composable(ReaderScreens.LoginScreen.name){
+            LoginScreen(navController)
+        }
+        composable(ReaderScreens.HomeScreen.name){
+            HomeScreen(navController)
+        }
+        composable(ReaderScreens.BookDetailsScreen.name){
+            BookDetailsScreen(navController)
+        }
+        composable(ReaderScreens.SearchScreen.name){
+            SearchScreen(navController)
+        }
+        composable(ReaderScreens.UpdateScreen.name){
+            UpdateScreen(navController)
+        }
+    }
 }
