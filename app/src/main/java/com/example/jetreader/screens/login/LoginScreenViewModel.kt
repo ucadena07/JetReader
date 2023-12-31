@@ -19,13 +19,14 @@ class LoginScreenViewModel: ViewModel() {
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
-    fun signIn(email:String,password:String)
+    fun signIn(email:String,password:String, home: () -> Unit = {})
     = viewModelScope.launch{
         try {
             auth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener{task ->
                     if(task.isSuccessful) {
-
+                        Log.d("FB", "SignIn: ${task.result.toString()}")
+                        home()
                     }else{
                         Log.d("FB", "SignIn Error: ${task.result.toString()}")
                     }

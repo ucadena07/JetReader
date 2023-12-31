@@ -47,9 +47,10 @@ import com.example.jetreader.R
 import com.example.jetreader.components.EmailInput
 import com.example.jetreader.components.PasswordInput
 import com.example.jetreader.components.ReaderLogo
+import com.example.jetreader.navigation.ReaderScreens
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val showLoginForm = rememberSaveable{
         mutableStateOf(true)
     }
@@ -58,11 +59,13 @@ fun LoginScreen(navController: NavHostController) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top) {
             ReaderLogo()
             if(showLoginForm.value){
-                AuthForm(){email,psw ->
-                    Log.d("Login creds","username: $email , password: $psw")
+                AuthForm(){email,password ->
+                    viewModel.signIn(email, password = password){
+                        navController.navigate(ReaderScreens.HomeScreen.name)
+                    }
                 }
             }else{
-                AuthForm(loading = false,isCreateAccount = true){email,psw ->
+                AuthForm(loading = false,isCreateAccount = true){email,password ->
 
                 }
             }
