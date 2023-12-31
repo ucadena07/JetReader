@@ -60,13 +60,13 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginScreenViewMode
             ReaderLogo()
             if(showLoginForm.value){
                 AuthForm(){email,password ->
-                    viewModel.signIn(email, password = password){
+                    viewModel.signInFireAuth(email, password = password){
                         navController.navigate(ReaderScreens.HomeScreen.name)
                     }
                 }
             }else{
                 AuthForm(loading = false,isCreateAccount = true){email,password ->
-                    viewModel.createUser(email, password = password){
+                    viewModel.createUserFireAuth(email, password = password){
                         navController.navigate(ReaderScreens.HomeScreen.name)
                     }
                 }

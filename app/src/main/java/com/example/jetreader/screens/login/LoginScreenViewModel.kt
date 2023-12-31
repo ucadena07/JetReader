@@ -9,6 +9,7 @@ import com.example.jetreader.utils.LoadingState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +20,7 @@ class LoginScreenViewModel: ViewModel() {
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
-    fun signIn(email:String,password:String, home: () -> Unit = {})
+    fun signInFireAuth(email:String,password:String, home: () -> Unit = {})
     = viewModelScope.launch{
         try {
             auth.signInWithEmailAndPassword(email,password)
@@ -36,13 +37,15 @@ class LoginScreenViewModel: ViewModel() {
             Log.d("FB", "SignIn Critical Error: ${ex.message}")
         }
     }
-    fun createUser(email:String,password:String, home: () -> Unit = {}) = viewModelScope.launch{
+    fun createUserFireAuth(email:String,password:String, home: () -> Unit = {}) = viewModelScope.launch{
         if (_loading.value == false){
             _loading.value = true
             auth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener{ task ->
                     if(task.isSuccessful) {
                         Log.d("FB", "SignIn: ${task.result.toString()}")
+                        val displayName = task.result.user?.email?.split("@")?.get(0)
+                        createUserFireStore(displayName!!)
                         home()
                     }else{
                         Log.d("FB", "SignIn Error: ${task.result.toString()}")
@@ -50,6 +53,14 @@ class LoginScreenViewModel: ViewModel() {
                 }
             _loading.value = false
         }
+    }
+
+    private fun createUserFireStore(displayName: String){
+        val userId= auth.currentUser?.uid
+        val user = mutableMapOf<String,Any>()
+        user["user_id"] = userId.toString()
+        user["display_name"] = displayName
+        FirebaseFirestore.getInstance().collection("users").add(user)
     }
 
 
