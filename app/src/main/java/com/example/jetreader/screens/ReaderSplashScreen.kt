@@ -40,7 +40,9 @@ fun SplashScreen(navController: NavHostController) {
             navController.navigate(ReaderScreens.LoginScreen.name)
         }else{
             navController.navigate(ReaderScreens.HomeScreen.name)
+            //navController.navigate(ReaderScreens.LoginScreen.name)
         }
+
 
     }
     Surface(modifier = Modifier
