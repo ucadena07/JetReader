@@ -36,8 +36,20 @@ class LoginScreenViewModel: ViewModel() {
             Log.d("FB", "SignIn Critical Error: ${ex.message}")
         }
     }
-    fun createUser(){
-
+    fun createUser(email:String,password:String, home: () -> Unit = {}) = viewModelScope.launch{
+        if (_loading.value == false){
+            _loading.value = true
+            auth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener{ task ->
+                    if(task.isSuccessful) {
+                        Log.d("FB", "SignIn: ${task.result.toString()}")
+                        home()
+                    }else{
+                        Log.d("FB", "SignIn Error: ${task.result.toString()}")
+                    }
+                }
+            _loading.value = false
+        }
     }
 
 

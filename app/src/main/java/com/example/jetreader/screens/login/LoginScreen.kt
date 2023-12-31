@@ -66,7 +66,9 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginScreenViewMode
                 }
             }else{
                 AuthForm(loading = false,isCreateAccount = true){email,password ->
-
+                    viewModel.createUser(email, password = password){
+                        navController.navigate(ReaderScreens.HomeScreen.name)
+                    }
                 }
             }
 
