@@ -2,8 +2,11 @@ package com.example.jetreader.screens.login
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,21 +15,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Visibility
+
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
+
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,33 +35,56 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.stringResource
+
+import androidx.compose.ui.text.font.FontWeight
+
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+
 import androidx.navigation.NavHostController
+import com.example.jetreader.R
+
 import com.example.jetreader.components.EmailInput
 import com.example.jetreader.components.PasswordInput
 import com.example.jetreader.components.ReaderLogo
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
+    val showLoginForm = rememberSaveable{
+        mutableStateOf(true)
+    }
+
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top) {
             ReaderLogo()
-            LoginForm(){email,psw ->
-                Log.d("Login creds","username: $email , password: $psw")
+            if(showLoginForm.value){
+                AuthForm(){email,psw ->
+                    Log.d("Login creds","username: $email , password: $psw")
+                }
+            }else{
+                AuthForm(loading = false,isCreateAccount = true){email,psw ->
+
+                }
             }
+
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(modifier = Modifier.height(15.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+            val text = if(showLoginForm.value) "Sign up" else "Login"
+            Text(text = "New User?")
+            Text(text = text, modifier = Modifier
+                .clickable {
+                    showLoginForm.value = !showLoginForm.value
+                }
+                .padding(start = 5.dp),
+                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.tertiary)
         }
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LoginForm(loading: Boolean = false, isCreateAccount: Boolean = false, onDone: (String,String) -> Unit = {email,password ->}){
+fun AuthForm(loading: Boolean = false, isCreateAccount: Boolean = false, onDone: (String,String) -> Unit = {email,password ->}){
     val email = rememberSaveable {
         mutableStateOf("")
     }
@@ -85,6 +107,11 @@ fun LoginForm(loading: Boolean = false, isCreateAccount: Boolean = false, onDone
             rememberScrollState()
         )
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        if(isCreateAccount){
+            Text(text = stringResource(id = R.string.create_acct), modifier = Modifier.padding(4.dp))
+        }else{
+            Text(text = "", modifier = Modifier.padding(4.dp))
+        }
         EmailInput(emailState = email, onAction = KeyboardActions {
             passwordFocusRequest.requestFocus()
         }, enabled = !loading)
@@ -105,6 +132,7 @@ fun LoginForm(loading: Boolean = false, isCreateAccount: Boolean = false, onDone
             validInputs = valid
         ){
             onDone(email.value.trim(),password.value.trim())
+            keyboardController?.hide()
         }
     }
 }
