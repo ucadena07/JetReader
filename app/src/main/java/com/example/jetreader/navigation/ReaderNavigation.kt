@@ -9,6 +9,7 @@ import com.example.jetreader.screens.details.BookDetailsScreen
 import com.example.jetreader.screens.home.HomeScreen
 import com.example.jetreader.screens.login.LoginScreen
 import com.example.jetreader.screens.search.SearchScreen
+import com.example.jetreader.screens.statsScreen.StatsScreen
 import com.example.jetreader.screens.update.UpdateScreen
 
 @Composable
@@ -32,6 +33,9 @@ fun ReaderNavigation() {
         }
         composable(ReaderScreens.UpdateScreen.name){
             UpdateScreen(navController)
+        }
+        composable(ReaderScreens.StatsScreen.name){
+            StatsScreen(navController)
         }
     }
 }
