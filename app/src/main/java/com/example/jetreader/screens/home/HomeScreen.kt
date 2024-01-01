@@ -1,6 +1,8 @@
 package com.example.jetreader.screens.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,12 +33,15 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.jetreader.R
+import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 import com.google.firebase.auth.FirebaseAuth
 
@@ -53,7 +58,7 @@ fun HomeScreen(navController: NavHostController) {
     Surface(modifier = Modifier
         .padding(it)
         .fillMaxSize()) {
-
+        HomeContent(navController = navController)
     }
    }
 }
@@ -101,4 +106,30 @@ fun ReaderAppBar(
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent)
     )
+}
+
+@Composable
+fun ReadingRightNowArea(books: List<MBook>, navController: NavController){
+
+}
+
+@Composable
+fun TitleSection(modifier: Modifier = Modifier, label:String){
+    Surface(modifier = modifier.padding(start = 5.dp,top = 1.dp)) {
+        Column {
+                Text(text = label,
+                    fontSize = 19.sp,
+                    fontStyle = FontStyle.Normal,
+                    textAlign = TextAlign.Left)
+        }
+    }
+}
+
+@Composable
+fun HomeContent(navController: NavController){
+    Column(modifier = Modifier.padding(2.dp), verticalArrangement = Arrangement.SpaceEvenly) {
+        Row(modifier = Modifier.align(alignment = Alignment.Start)) {
+            TitleSection(label = "Your reading \n " + " activity right now")
+        }
+    }
 }
