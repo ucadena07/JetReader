@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.imageLoader
 import coil.request.ImageRequest
+import coil.util.DebugLogger
 import com.example.jetreader.components.FABContent
 import com.example.jetreader.components.ReaderAppBar
 import com.example.jetreader.components.TitleSection
@@ -128,12 +131,21 @@ fun ListCard(book: MBook = MBook(id = "Afdf",title = "Running", authors = "rico 
         Column(modifier = Modifier.width(screenWidth.dp - (spacing * 2).dp),
             horizontalAlignment = Alignment.Start) {
             Row(horizontalArrangement = Arrangement.Center) {
+
+                val imageLoader = LocalContext.current.imageLoader.newBuilder()
+                    .logger(DebugLogger())
+                    .build()
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("")
+
+                        .data("http://books.google.com/books/content?id=7cBZEAAAQBAJ&printsec=frontcover&img=1")
                         .crossfade(true)
+                        .setHeader("User-Agent", "Mozilla/5.0")
+
                         .build(),
                     contentDescription = "book image",
+                    imageLoader = imageLoader,
+
                     modifier = Modifier
                         .height(140.dp)
                         .width(100.dp)
