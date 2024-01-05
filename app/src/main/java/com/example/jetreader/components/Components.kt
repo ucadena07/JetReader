@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -108,7 +109,9 @@ fun InputField(
         label = { Text(text = labelId)},
         singleLine = isSingleLine,
         textStyle = TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground),
-        modifier = modifier.padding(bottom = 10.dp,start = 10.dp,end = 10.dp).fillMaxWidth(),
+        modifier = modifier
+            .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
+            .fillMaxWidth(),
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
     )
@@ -169,8 +172,10 @@ fun TitleSection(modifier: Modifier = Modifier, label:String){
 @Composable
 fun ReaderAppBar(
     title: String,
+    icon: ImageVector? = null,
     showProfile: Boolean,
-    navController: NavController
+    navController: NavController,
+    onBackArrowClicked: () -> Unit = {}
 ){
     TopAppBar(
         title = {
@@ -182,20 +187,29 @@ fun ReaderAppBar(
                         )
                         .scale(0.6f))
                 }
+                if(icon != null){
+                    Icon(imageVector = icon, contentDescription = "arrow back", tint = Color.Red.copy(0.7f), modifier = Modifier.clickable {
+                        onBackArrowClicked.invoke()
+                    })
+                }
+                Spacer(modifier = Modifier.width(50.dp))
                 Text(
                     text = title,
                     color = Color.Red.copy(0.9f),
                     style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 )
-                Spacer(modifier = Modifier.width(150.dp))
+
             }
         },
         actions = {
-            IconButton(onClick = { FirebaseAuth.getInstance().signOut().run {
-                navController.navigate(ReaderScreens.LoginScreen.name)
-            } }) {
-                Icon(imageVector = Icons.Default.Logout, contentDescription = "logout", tint = Color(0xFF92CBDF))
+            if(showProfile){
+                IconButton(onClick = { FirebaseAuth.getInstance().signOut().run {
+                    navController.navigate(ReaderScreens.LoginScreen.name)
+                } }) {
+                    Icon(imageVector = Icons.Default.Logout, contentDescription = "logout", tint = Color(0xFF92CBDF))
+                }
             }
+
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent)
     )
