@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -54,7 +56,7 @@ import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavHostController) {
+fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewModel = hiltViewModel()) {
     Scaffold(topBar = {
         ReaderAppBar(title = "Search Book", icon = Icons.Default.ArrowBack, navController = navController, showProfile = false){
             navController.navigate(ReaderScreens.HomeScreen.name)
@@ -70,8 +72,8 @@ fun SearchScreen(navController: NavHostController) {
             Column {
                 SearchForm(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)){ search ->
-                    Log.d("FB",search)
+                    .padding(16.dp),viewModel = viewModel){ search ->
+                    viewModel.searchBooks(search)
                 }
                 Spacer(modifier = Modifier.height(13.dp))
                 BookList(navController)
@@ -137,6 +139,7 @@ fun BookRow(book: MBook, navController: NavController) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchForm(modifier: Modifier = Modifier,
+               viewModel: SearchScreenViewModel,
                loading:Boolean = false,
                hint: String = "Search",
                onSearch:(String) -> Unit = {}){
