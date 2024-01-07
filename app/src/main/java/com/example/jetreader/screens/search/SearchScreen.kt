@@ -1,7 +1,5 @@
 package com.example.jetreader.screens.search
 
-import android.renderscript.ScriptGroup.Input
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,7 +38,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -51,8 +47,6 @@ import com.example.jetreader.components.InputField
 import com.example.jetreader.components.ReaderAppBar
 import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
-import com.example.jetreader.screens.home.HomeContent
-import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +70,7 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
                     viewModel.searchBooks(search)
                 }
                 Spacer(modifier = Modifier.height(13.dp))
-                BookList(navController)
+                BookList(navController,viewModel)
             }
 
 
@@ -87,18 +81,23 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
 }
 
 @Composable
-fun BookList(navController: NavController) {
-    var list = listOf(
-        MBook(title = "dfdfdf"),
-        MBook(title = "xxxx"),
-        MBook(title = "yyyy"),
-        MBook(title = "dfduuuufdf"),
-    )
-   LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
-       items(items = list){book ->
-           BookRow(book,navController)
-       }
-   }
+fun BookList(navController: NavController, viewModel: SearchScreenViewModel) {
+    if(viewModel.listOfBooks.value.loading == true){
+        CircularProgressIndicator()
+    }else{
+        var list = listOf(
+            MBook(title = "dfdfdf"),
+            MBook(title = "xxxx"),
+            MBook(title = "yyyy"),
+            MBook(title = "dfduuuufdf"),
+        )
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
+            items(items = list){book ->
+                BookRow(book,navController)
+            }
+        }
+    }
+
 }
 
 @Composable
