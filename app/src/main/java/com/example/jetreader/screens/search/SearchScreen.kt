@@ -50,7 +50,7 @@ import com.example.jetreader.navigation.ReaderScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewModel = hiltViewModel()) {
+fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewModelV2 = hiltViewModel()) {
     Scaffold(topBar = {
         ReaderAppBar(title = "Search Book", icon = Icons.Default.ArrowBack, navController = navController, showProfile = false){
             navController.navigate(ReaderScreens.HomeScreen.name)
@@ -81,7 +81,7 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
 }
 
 @Composable
-fun BookList(navController: NavController, viewModel: SearchScreenViewModel) {
+fun BookList(navController: NavController, viewModel: SearchScreenViewModelV2) {
     if(viewModel.listOfBooks.value.loading == true){
         CircularProgressIndicator()
     }else{
@@ -138,7 +138,7 @@ fun BookRow(book: MBook, navController: NavController) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchForm(modifier: Modifier = Modifier,
-               viewModel: SearchScreenViewModel,
+               viewModel: SearchScreenViewModelV2,
                loading:Boolean = false,
                hint: String = "Search",
                onSearch:(String) -> Unit = {}){
