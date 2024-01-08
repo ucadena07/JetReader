@@ -25,7 +25,7 @@ class SearchScreenViewModelV2 @Inject constructor(private val repo: BookReposito
        searchBooks("android")
     }
 
-    private fun searchBooks(query: String) {
+     fun searchBooks(query: String) {
         viewModelScope.launch {
             if(query.isEmpty()) return@launch
 

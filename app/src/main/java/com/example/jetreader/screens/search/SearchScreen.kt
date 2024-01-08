@@ -45,6 +45,7 @@ import coil.request.ImageRequest
 import com.example.jetreader.components.FABContent
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.ReaderAppBar
+import com.example.jetreader.model.Item
 import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 
@@ -82,26 +83,16 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
 
 @Composable
 fun BookList(navController: NavController, viewModel: SearchScreenViewModelV2) {
-    if(viewModel.listOfBooks.value.loading == true){
-        CircularProgressIndicator()
-    }else{
-        var list = listOf(
-            MBook(title = "dfdfdf"),
-            MBook(title = "xxxx"),
-            MBook(title = "yyyy"),
-            MBook(title = "dfduuuufdf"),
-        )
-        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
-            items(items = list){book ->
-                BookRow(book,navController)
-            }
+    val list = viewModel.list
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
+        items(items = list){book ->
+            BookRow(book,navController)
         }
     }
-
 }
 
 @Composable
-fun BookRow(book: MBook, navController: NavController) {
+fun BookRow(book: Item, navController: NavController) {
    Card(modifier = Modifier
        .clickable {
 
@@ -113,7 +104,7 @@ fun BookRow(book: MBook, navController: NavController) {
        colors = CardDefaults.cardColors(containerColor = Color.White),
        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)) {
        Row(modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.Top) {
-           val imageUrl = "http://books.google.com/books/content?id=7cBZEAAAQBAJ&printsec=frontcover&img=1"
+           val imageUrl = book.volumeInfo.imageLinks.thumbnail
            AsyncImage(
                model = ImageRequest.Builder(LocalContext.current)
                    .data(imageUrl)
@@ -126,8 +117,8 @@ fun BookRow(book: MBook, navController: NavController) {
                    .padding(end = 4.dp)
            )
             Column {
-                Text(text = book.title.toString(), overflow = TextOverflow.Ellipsis)
-                Text(text = "Authors: ${book.authors}", overflow = TextOverflow.Clip, style = MaterialTheme.typography.titleSmall)
+                Text(text = book.volumeInfo.title.toString(), overflow = TextOverflow.Ellipsis)
+                Text(text = "Authors: ${book.volumeInfo.authors}", overflow = TextOverflow.Clip, style = MaterialTheme.typography.titleSmall)
 
 
             }
