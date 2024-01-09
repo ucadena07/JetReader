@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -124,8 +125,12 @@ fun BookRow(book: Item, navController: NavController) {
            )
             Column {
                 Text(text = book.volumeInfo.title.toString(), overflow = TextOverflow.Ellipsis)
-                Text(text = "Authors: ${book.volumeInfo.authors}", overflow = TextOverflow.Clip, style = MaterialTheme.typography.titleSmall)
-
+                Text(text = "Authors: ${book.volumeInfo.authors}", overflow = TextOverflow.Clip,
+                    style = MaterialTheme.typography.titleSmall, fontStyle = FontStyle.Italic)
+                Text(text = "Date: ${book.volumeInfo.publishedDate}", overflow = TextOverflow.Clip,
+                    style = MaterialTheme.typography.titleSmall, fontStyle = FontStyle.Italic)
+                Text(text = "Category: ${book.volumeInfo.categories}", overflow = TextOverflow.Clip,
+                    style = MaterialTheme.typography.titleSmall, fontStyle = FontStyle.Italic)
 
             }
        }
