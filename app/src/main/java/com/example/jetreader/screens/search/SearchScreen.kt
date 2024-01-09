@@ -56,12 +56,10 @@ import com.example.jetreader.navigation.ReaderScreens
 fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewModelV2 = hiltViewModel()) {
     Scaffold(topBar = {
         ReaderAppBar(title = "Search Book", icon = Icons.Default.ArrowBack, navController = navController, showProfile = false){
-            navController.navigate(ReaderScreens.HomeScreen.name)
+            navController.popBackStack()
         }
     }, floatingActionButton = {
-        FABContent{
-
-        }
+        
     }) { it ->
         Surface(modifier = Modifier
             .padding(it)
@@ -102,7 +100,7 @@ fun BookList(navController: NavController, viewModel: SearchScreenViewModelV2) {
 fun BookRow(book: Item, navController: NavController) {
    Card(modifier = Modifier
        .clickable {
-
+            navController.navigate(ReaderScreens.BookDetailsScreen.name)
        }
        .fillMaxWidth()
        .height(100.dp)
