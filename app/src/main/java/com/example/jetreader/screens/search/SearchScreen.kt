@@ -20,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -84,11 +85,16 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
 @Composable
 fun BookList(navController: NavController, viewModel: SearchScreenViewModelV2) {
     val list = viewModel.list
-    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
-        items(items = list){book ->
-            BookRow(book,navController)
+    if(viewModel.isLoading){
+        LinearProgressIndicator()
+    }else{
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)){
+            items(items = list){book ->
+                BookRow(book,navController)
+            }
         }
     }
+
 }
 
 @Composable

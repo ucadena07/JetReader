@@ -16,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModelV2 @Inject constructor(private val repo: BookRepositoryV2) : ViewModel() {
     var list: List<Item> by mutableStateOf(listOf())
+    var isLoading: Boolean by mutableStateOf(true)
 
     init{
         loadBooks()
@@ -27,6 +28,7 @@ class SearchScreenViewModelV2 @Inject constructor(private val repo: BookReposito
 
      fun searchBooks(query: String) {
         viewModelScope.launch {
+            isLoading = true
             if(query.isEmpty()) return@launch
 
             try {
@@ -43,6 +45,8 @@ class SearchScreenViewModelV2 @Inject constructor(private val repo: BookReposito
 
             }catch (e: Exception){
                 Log.d("Network",e.message.toString())
+            }finally {
+                isLoading = false
             }
         }
     }
