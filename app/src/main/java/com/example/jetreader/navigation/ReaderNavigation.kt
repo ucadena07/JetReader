@@ -2,9 +2,11 @@ package com.example.jetreader.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.jetreader.screens.SplashScreen
 import com.example.jetreader.screens.details.BookDetailsScreen
 import com.example.jetreader.screens.home.HomeScreen
@@ -27,8 +29,14 @@ fun ReaderNavigation() {
         composable(ReaderScreens.HomeScreen.name){
             HomeScreen(navController)
         }
-        composable(ReaderScreens.BookDetailsScreen.name){
-            BookDetailsScreen(navController, "")
+
+        val detailName = ReaderScreens.BookDetailsScreen.name
+        composable("$detailName/{bookId}", arguments = listOf(navArgument("bookId"){
+            type = NavType.StringType
+        })){ backStackEntry ->
+            backStackEntry.arguments?.getString("bookId").let{
+                BookDetailsScreen(navController, it.toString())
+            }
         }
         composable(ReaderScreens.SearchScreen.name){
             val searchScreenViewModel = hiltViewModel<SearchScreenViewModelV2>()

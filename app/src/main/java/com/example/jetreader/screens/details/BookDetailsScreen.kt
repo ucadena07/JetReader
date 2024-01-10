@@ -50,7 +50,7 @@ fun BookDetailsScreen(navController: NavHostController, bookId: String) {
                 .padding(3.dp)
                 .fillMaxSize()) {
                 Column(modifier = Modifier.padding(top = 12.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top) {
-                    Text(text = "Book des")
+                    Text(text = "Book des: $bookId")
                 }
             }
 

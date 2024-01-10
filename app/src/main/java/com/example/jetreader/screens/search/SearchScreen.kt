@@ -59,7 +59,7 @@ fun SearchScreen(navController: NavHostController,viewModel: SearchScreenViewMod
             navController.popBackStack()
         }
     }, floatingActionButton = {
-        
+
     }) { it ->
         Surface(modifier = Modifier
             .padding(it)
@@ -100,7 +100,7 @@ fun BookList(navController: NavController, viewModel: SearchScreenViewModelV2) {
 fun BookRow(book: Item, navController: NavController) {
    Card(modifier = Modifier
        .clickable {
-            navController.navigate(ReaderScreens.BookDetailsScreen.name)
+            navController.navigate(ReaderScreens.BookDetailsScreen.name + "/${book.id}")
        }
        .fillMaxWidth()
        .height(100.dp)
