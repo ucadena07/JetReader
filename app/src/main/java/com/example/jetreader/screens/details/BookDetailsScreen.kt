@@ -1,5 +1,6 @@
 package com.example.jetreader.screens.details
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,9 +26,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -107,10 +112,26 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
     Text(text = bookData?.title.toString(),
         style = MaterialTheme.typography.titleLarge,
         overflow = TextOverflow.Ellipsis)
-    Text(text = "Authors: ${bookData?.authors.toString()}",style = MaterialTheme.typography.titleSmall)
+    Text(text = "Authors: ${bookData?.authors.toString()}",style = MaterialTheme.typography.titleSmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
     Text(text = "Page Count: ${bookData?.pageCount.toString()}",style = MaterialTheme.typography.titleSmall)
-    Text(text = "Categories: ${bookData?.categories.toString()}",style = MaterialTheme.typography.titleSmall)
+    Text(text = "Categories: ${bookData?.categories.toString()}",style = MaterialTheme.typography.titleSmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
     Text(text = "Published: ${bookData?.publishedDate.toString()}",style = MaterialTheme.typography.titleSmall)
     Spacer(modifier = Modifier.height(5.dp))
+
+    var cleanDescription = HtmlCompat.fromHtml(bookData!!.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+    val localDims = LocalContext.current.resources.displayMetrics
+    Surface(modifier = Modifier.height(localDims.heightPixels.dp.times(0.09f)).padding(4.dp), shape = RectangleShape,
+        border = BorderStroke(1.dp, Color.DarkGray)
+    ) {
+        LazyColumn(modifier = Modifier.padding(3.dp)){
+            item{
+                Text(text = cleanDescription.toString())
+            }
+
+        }
+    }
+
+
 
 }
