@@ -1,5 +1,6 @@
 package com.example.jetreader.screens.details
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.screens.search.BookList
 import com.example.jetreader.screens.search.SearchForm
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -142,8 +144,19 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
     Row(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceAround) {
         RoundedButton(label = "Save"){
             val db = FirebaseFirestore.getInstance()
-            val book = MBook()
-            saveToFirebase(book)
+            val book = MBook(
+                title = bookData.title,
+                authors = bookData.authors.toString(),
+                description = bookData.description,
+                categories = bookData.categories.toString(),
+                notes = "",
+                photoUrl = bookData.imageLinks.thumbnail,
+                publishedDate = bookData.publishedDate,
+                pageCount = bookData.pageCount.toString(),
+                rating = 0.0,
+                googleBookId = googleBookId,
+                userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
+            saveToFirebase(book,navController)
         }
         Spacer(modifier = Modifier.width(25.dp))
         RoundedButton(label = "Cancel"){
@@ -154,6 +167,31 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
 
 }
 
-fun saveToFirebase(book: MBook) {
+fun saveToFirebase(book: MBook, navController: NavController) {
+    val db = FirebaseFirestore.getInstance()
+    val dbCollection = db.collection("books")
+    if (book.toString().isNotEmpty()){
+        dbCollection.add(book)
+            .addOnSuccessListener { documentRef ->
+                val docId = documentRef.id
+                dbCollection.document(docId)
+                    .update(hashMapOf("id" to docId) as Map<String, Any>)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            navController.popBackStack()
+                        }
 
+
+                    }.addOnFailureListener {
+                        Log.d("Error", "SaveToFirebase:  Error updating doc",it )
+                    }
+
+            }
+
+
+    }else {
+
+
+
+    }
 }
