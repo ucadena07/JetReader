@@ -3,6 +3,7 @@ package com.example.jetreader.screens.details
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,11 +40,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.jetreader.components.FABContent
 import com.example.jetreader.components.ReaderAppBar
+import com.example.jetreader.components.RoundedButton
 import com.example.jetreader.data.Resource
 import com.example.jetreader.model.Item
+import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.screens.search.BookList
 import com.example.jetreader.screens.search.SearchForm
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,7 +126,9 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
     var cleanDescription = HtmlCompat.fromHtml(bookData!!.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
     val localDims = LocalContext.current.resources.displayMetrics
-    Surface(modifier = Modifier.height(localDims.heightPixels.dp.times(0.09f)).padding(4.dp), shape = RectangleShape,
+    Surface(modifier = Modifier
+        .height(localDims.heightPixels.dp.times(0.09f))
+        .padding(4.dp), shape = RectangleShape,
         border = BorderStroke(1.dp, Color.DarkGray)
     ) {
         LazyColumn(modifier = Modifier.padding(3.dp)){
@@ -131,7 +138,22 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
 
         }
     }
+    //Buttons
+    Row(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceAround) {
+        RoundedButton(label = "Save"){
+            val db = FirebaseFirestore.getInstance()
+            val book = MBook()
+            saveToFirebase(book)
+        }
+        Spacer(modifier = Modifier.width(25.dp))
+        RoundedButton(label = "Cancel"){
+            navController.popBackStack()
+        }
+    }
 
 
+}
+
+fun saveToFirebase(book: MBook) {
 
 }
