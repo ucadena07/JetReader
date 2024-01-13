@@ -223,8 +223,8 @@ fun FABContent(onTap: () -> Unit) {
         Icon(imageVector = Icons.Default.Add, contentDescription = "Add a Book", tint = MaterialTheme.colorScheme.onSecondary)
     }
 }
-@Preview@Composable
-fun ListCard(book: MBook = MBook(id = "Afdf",title = "Running", authors = "rico cadena","hello world"),
+@Composable
+fun ListCard(book: MBook,
              onPressDetails: (String) -> Unit  = {}){
 
     val context = LocalContext.current
@@ -253,7 +253,7 @@ fun ListCard(book: MBook = MBook(id = "Afdf",title = "Running", authors = "rico 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
 
-                        .data("http://books.google.com/books/content?id=7cBZEAAAQBAJ&printsec=frontcover&img=1")
+                        .data(book.photoUrl)
                         .crossfade(true)
                         .setHeader("User-Agent", "Mozilla/5.0")
 

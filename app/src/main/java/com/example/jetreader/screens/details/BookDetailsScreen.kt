@@ -143,16 +143,15 @@ fun ShowBookDetails(bookInfo: Resource<Item>, navController: NavController) {
     //Buttons
     Row(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceAround) {
         RoundedButton(label = "Save"){
-            val db = FirebaseFirestore.getInstance()
             val book = MBook(
                 title = bookData.title,
                 authors = bookData.authors.toString(),
                 description = bookData.description,
-                categories = bookData.categories.toString(),
+                categories = bookData.categories?.toString(),
                 notes = "",
-                photoUrl = bookData.imageLinks.thumbnail,
-                publishedDate = bookData.publishedDate,
-                pageCount = bookData.pageCount.toString(),
+                photoUrl = bookData.imageLinks?.thumbnail,
+                publishedDate = bookData?.publishedDate,
+                pageCount = bookData.pageCount?.toString(),
                 rating = 0.0,
                 googleBookId = googleBookId,
                 userId = FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -178,7 +177,7 @@ fun saveToFirebase(book: MBook, navController: NavController) {
                     .update(hashMapOf("id" to docId) as Map<String, Any>)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            navController.popBackStack()
+                            navController.navigate(ReaderScreens.HomeScreen.name)
                         }
 
 

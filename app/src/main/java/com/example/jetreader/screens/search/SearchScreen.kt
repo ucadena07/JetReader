@@ -109,7 +109,8 @@ fun BookRow(book: Item, navController: NavController) {
        colors = CardDefaults.cardColors(containerColor = Color.White),
        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)) {
        Row(modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.Top) {
-           val imageUrl = book.volumeInfo.imageLinks.thumbnail
+           var imageUrl = book?.volumeInfo?.imageLinks?.thumbnail
+           if(imageUrl.isNullOrEmpty()) imageUrl = ""
            AsyncImage(
                model = ImageRequest.Builder(LocalContext.current)
                    .data(imageUrl)
