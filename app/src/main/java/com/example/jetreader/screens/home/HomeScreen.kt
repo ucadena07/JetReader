@@ -96,7 +96,7 @@ fun HomeContent(navController: NavController, homeViewModel: HomeScreenViewModel
 @Composable
 fun BookListArea(lisOfBooks: List<MBook>, navController: NavController) {
     HorizontalScrollComponent(lisOfBooks){
-        //Todo: go to details
+      navController.navigate(ReaderScreens.UpdateScreen.name + "/$it")
     }
 }
 
@@ -109,7 +109,7 @@ fun HorizontalScrollComponent(lisOfBooks: List<MBook>, onCardPress: (String) -> 
         .horizontalScroll(scrollState)) {
         for (book in lisOfBooks){
           ListCard(book){
-              onCardPress(it)
+              onCardPress(book.id.toString())
           }
         }
     }
