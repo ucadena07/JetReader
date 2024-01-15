@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -33,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -88,6 +90,8 @@ fun UpdateScreen(navController: NavHostController, id: String?,viewModel: HomeSc
                     ShowSimpleForm(book = viewModel.data.value.data?.first{book ->
                         book.id   == id
                     }, navController)
+
+
                 }
 
             }
@@ -102,10 +106,44 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
     val noteText = remember{
         mutableStateOf("")
     }
+    val isStartedReading = remember{
+        mutableStateOf(false)
+    }
+    val isFinishedReading = remember{
+        mutableStateOf(false)
+    }
    SimpleForm(defaultValue = if(book?.notes.toString().isNotEmpty()) book?.notes.toString() else "No thoughts available"){note->
 
         noteText.value = note
    }
+    Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+        if(book?.startedReading === null){
+            TextButton(onClick = { isStartedReading.value = true }, enabled = book?.startedReading == null) {
+                if(!isStartedReading.value){
+                    Text(text = "Start Reading")
+                }else{
+                    Text(text = "Started Reading", modifier = Modifier.alpha(0.6f), color = Color.Red.copy(0.5f))
+                }
+
+            }
+        }else{
+            Text(text = "Started on: ${book.startedReading}")
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        TextButton(onClick = { isFinishedReading.value = true }, enabled = book?.finishedReading == null) {
+            if(book?.finishedReading == null){
+                if(!isStartedReading.value){
+                    Text(text = "Mark as Read")
+                }else{
+                    Text(text = "Finished Reading")
+                }
+
+            }else{
+                Text(text = "Finished on ${book.finishedReading}", modifier = Modifier.alpha(0.6f), color = Color.Red.copy(0.5f))
+            }
+
+        }
+    }
 
 }
 
@@ -132,8 +170,15 @@ fun SimpleForm(
                 onSearch(textFieldValue.value.trim())
                 keyboardController?.hide()
             },
-            modifier = Modifier.fillMaxWidth().height(140.dp).padding(3.dp).background(Color.White,
-                CircleShape).padding(horizontal = 20.dp, vertical = 12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp)
+                .padding(3.dp)
+                .background(
+                    Color.White,
+                    CircleShape
+                )
+                .padding(horizontal = 20.dp, vertical = 12.dp)
         )
     }
 }
