@@ -61,11 +61,14 @@ import com.example.jetreader.components.FABContent
 import com.example.jetreader.components.InputField
 import com.example.jetreader.components.RatingBar
 import com.example.jetreader.components.ReaderAppBar
+import com.example.jetreader.components.RoundedButton
 import com.example.jetreader.data.DataOrException
 import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.screens.home.HomeContent
 import com.example.jetreader.screens.home.HomeScreenViewModel
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +131,11 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
     val ratingVal = remember{
         mutableStateOf(0)
     }
+    if(book?.rating != null){
+        book?.rating?.toInt().let {
+            ratingVal.value = it!!
+        }
+    }
    SimpleForm(defaultValue = if(book?.notes.toString().isNotEmpty()) book?.notes.toString() else "No thoughts available"){note->
 
         noteText.value = note
@@ -164,6 +172,44 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
     book?.rating?.toInt().let {rating ->
         RatingBar(rating = rating!!){
             ratingVal.value = rating
+        }
+    }
+    Spacer(modifier = Modifier.padding(bottom = 15.dp))
+    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(horizontal = 50.dp)) {
+        val changedNotes = book?.notes != noteText.value
+        val changedRating = book?.rating?.toInt() != ratingVal.value
+        val isFinishedTimeStamp = if (isFinishedReading.value) Timestamp.now() else book?.finishedReading
+        val isStartedTimeStamp = if (isStartedReading.value) Timestamp.now() else book?.startedReading
+
+        val bookUpdate = changedNotes || changedRating || isStartedReading.value || isFinishedReading.value
+
+        val bookToUpdate = hashMapOf(
+            "finished_reading_at" to isFinishedTimeStamp,
+            "started_reading_at" to isStartedTimeStamp,
+            "rating" to ratingVal.value,
+            "notes" to noteText.value).toMap()
+
+        RoundedButton(label = "update"){
+            if (bookUpdate) {
+                FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(book?.id!!)
+                    .update(bookToUpdate)
+                    .addOnCompleteListener {
+                        //showToast(context, "Book Updated Successfully!")
+                        navController.navigate(ReaderScreens.HomeScreen.name)
+
+                        // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")
+
+                    }.addOnFailureListener{
+                        Log.w("Error", "Error updating document" , it)
+                    }
+            }
+
+
+        }
+        RoundedButton(label = "Delete"){
+
         }
     }
 
