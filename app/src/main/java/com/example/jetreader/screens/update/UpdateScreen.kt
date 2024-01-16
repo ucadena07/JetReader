@@ -1,6 +1,10 @@
 package com.example.jetreader.screens.update
 
 import android.util.Log
+import android.view.MotionEvent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +24,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,18 +32,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -47,8 +56,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.jetreader.R
 import com.example.jetreader.components.FABContent
 import com.example.jetreader.components.InputField
+import com.example.jetreader.components.RatingBar
 import com.example.jetreader.components.ReaderAppBar
 import com.example.jetreader.data.DataOrException
 import com.example.jetreader.model.MBook
@@ -101,6 +112,7 @@ fun UpdateScreen(navController: NavHostController, id: String?,viewModel: HomeSc
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ShowSimpleForm(book: MBook?, navController: NavController) {
     val noteText = remember{
@@ -111,6 +123,10 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
     }
     val isFinishedReading = remember{
         mutableStateOf(false)
+    }
+
+    val ratingVal = remember{
+        mutableStateOf(0)
     }
    SimpleForm(defaultValue = if(book?.notes.toString().isNotEmpty()) book?.notes.toString() else "No thoughts available"){note->
 
@@ -142,6 +158,12 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
                 Text(text = "Finished on ${book.finishedReading}", modifier = Modifier.alpha(0.6f), color = Color.Red.copy(0.5f))
             }
 
+        }
+    }
+    Text(text = "Rating", modifier = Modifier.padding(bottom = 3.dp))
+    book?.rating?.toInt().let {rating ->
+        RatingBar(rating = rating!!){
+            ratingVal.value = rating
         }
     }
 
@@ -198,6 +220,7 @@ fun ShowBookUpdate(bookInfo: DataOrException<List<MBook>, Boolean, Exception>, b
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CardListItem(book: MBook, onPressDetails: () -> Unit) {
     Card(modifier = Modifier
@@ -255,5 +278,8 @@ fun CardListItem(book: MBook, onPressDetails: () -> Unit) {
         }
 
 
+
     }
 }
+
+
