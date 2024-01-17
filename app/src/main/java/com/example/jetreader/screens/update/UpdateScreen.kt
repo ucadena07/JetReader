@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -217,8 +219,31 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
 
 
         }
-        RoundedButton(label = "Delete"){
+        val openDialog = remember {
+            mutableStateOf(false)
+        }
+        if (openDialog.value) {
+            ShowAlertDialog(message = "ARE u sure?", openDialog){
+                FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(book?.id!!)
+                    .delete()
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            openDialog.value = false
+                            /*
+                             Don't popBackStack() if we want the immediate recomposition
+                             of the MainScreen UI, instead navigate to the mainScreen!
+                            */
 
+                            navController.navigate(ReaderScreens.HomeScreen.name)
+                        }
+                    }
+
+            }
+        }
+        RoundedButton(label = "Delete"){
+            openDialog.value = true
         }
     }
 
@@ -226,6 +251,32 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
 
 fun showToast(context: Context, s: String) {
     Toast.makeText(context,s,Toast.LENGTH_SHORT).show()
+}
+
+@Composable
+fun ShowAlertDialog(
+    message: String,
+    openDialog: MutableState<Boolean>,
+    onYesPressed: () -> Unit) {
+
+    if (openDialog.value) {
+        AlertDialog(onDismissRequest = { openDialog.value = false},
+            title = { Text(text = "Delete Book")},
+            text = { Text(text = message)},
+            confirmButton = {
+                TextButton(onClick = { onYesPressed.invoke() }) {
+                    Text(text = "Yes")
+
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { openDialog.value = false }) {
+                    Text(text = "No")
+
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
