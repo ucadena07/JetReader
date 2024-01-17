@@ -1,7 +1,9 @@
 package com.example.jetreader.screens.update
 
+import android.content.Context
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -67,8 +69,11 @@ import com.example.jetreader.model.MBook
 import com.example.jetreader.navigation.ReaderScreens
 import com.example.jetreader.screens.home.HomeContent
 import com.example.jetreader.screens.home.HomeScreenViewModel
+import com.example.jetreader.utils.formatDate
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.coroutines.CoroutineContext
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,10 +141,13 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
             ratingVal.value = it!!
         }
     }
-   SimpleForm(defaultValue = if(book?.notes.toString().isNotEmpty()) book?.notes.toString() else "No thoughts available"){note->
-
+    val context = LocalContext.current
+    SimpleForm(defaultValue = if (book?.notes.toString().isNotEmpty()) book?.notes.toString()
+    else "No thoughts available."){ note ->
         noteText.value = note
-   }
+
+
+    }
     Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
         if(book?.startedReading === null){
             TextButton(onClick = { isStartedReading.value = true }, enabled = book?.startedReading == null) {
@@ -151,7 +159,7 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
 
             }
         }else{
-            Text(text = "Started on: ${book.startedReading}")
+            Text(text = "Started on: ${formatDate(book.startedReading!!)}")
         }
         Spacer(modifier = Modifier.height(4.dp))
         TextButton(onClick = { isFinishedReading.value = true }, enabled = book?.finishedReading == null) {
@@ -163,13 +171,14 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
                 }
 
             }else{
-                Text(text = "Finished on ${book.finishedReading}", modifier = Modifier.alpha(0.6f), color = Color.Red.copy(0.5f))
+                Text(text = "Finished on ${formatDate(book.finishedReading!!)}", modifier = Modifier.alpha(0.6f), color = Color.Red.copy(0.5f))
             }
 
         }
     }
     Text(text = "Rating", modifier = Modifier.padding(bottom = 3.dp))
     book?.rating?.toInt().let {rating ->
+
         RatingBar(rating = rating!!){
             ratingVal.value = rating
         }
@@ -196,7 +205,7 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
                     .document(book?.id!!)
                     .update(bookToUpdate)
                     .addOnCompleteListener {
-                        //showToast(context, "Book Updated Successfully!")
+                        showToast(context, "Book Updated Successfully!")
                         navController.navigate(ReaderScreens.HomeScreen.name)
 
                         // Log.d("Update", "ShowSimpleForm: ${task.result.toString()}")
@@ -213,6 +222,10 @@ fun ShowSimpleForm(book: MBook?, navController: NavController) {
         }
     }
 
+}
+
+fun showToast(context: Context, s: String) {
+    Toast.makeText(context,s,Toast.LENGTH_SHORT).show()
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
